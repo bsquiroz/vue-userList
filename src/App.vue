@@ -33,7 +33,7 @@ function delUser(id: string) {
 }
 
 function onSubmit() {
-    if (!nameUser) return alert("The name is required");
+    if (!nameUser.value) return alert("The name is required");
 
     if (editing.value) {
         alert("User edit");
