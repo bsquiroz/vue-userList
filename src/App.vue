@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { Ref, computed, ref } from "vue";
+import { computed, ref } from "vue";
 import { Filters, User } from "./interfaces";
 
 import Layout from "./components/Layout.vue";
 import Users from "./components/Users.vue";
+import FormUser from "./components/FormUser.vue";
+import Filter from "./components/Filters.vue";
 
-const users: Ref<User[]> = ref(
-    JSON.parse(localStorage.getItem("users")!) || []
-);
+const users = ref<User[]>(JSON.parse(localStorage.getItem("users")!) || []);
 
-const editing: Ref<User | null> = ref(
+const editing = ref<User | null>(
     JSON.parse(localStorage.getItem("editing")!) || null
 );
 
@@ -17,7 +17,7 @@ const nameUser = ref(JSON.parse(localStorage.getItem("editing")!)?.name || "");
 const ocupationUser = ref(
     JSON.parse(localStorage.getItem("editing")!)?.ocupation || ""
 );
-const filters: Ref<Filters> = ref(null);
+const filters = ref<Filters>(null);
 
 function changeState(id: string) {
     users.value = users.value.map((user) =>
@@ -96,7 +96,7 @@ function fnEditing(id: string) {
     localStorage.setItem("editing", JSON.stringify(userfind));
 }
 
-const usersFiltered = computed(() =>
+const usersFiltered = computed<User[]>(() =>
     filters.value
         ? ["active", "inactive"].includes(filters.value)
             ? users.value.filter((user) =>
@@ -110,52 +110,14 @@ const usersFiltered = computed(() =>
 <template>
     <Layout>
         <section class="flex flex-col gap-2">
-            <form @submit.prevent="onSubmit" class="flex flex-col gap-2">
-                <h1 className="text-5xl font-bold text-center">User List</h1>
-                <h2 class="text-center text-2xl">
-                    {{ editing ? "Update user" : "Create user" }}
-                </h2>
-                <div class="grid">
-                    <label>Name user</label>
-                    <input
-                        class="input placeholder:text-black"
-                        type="text"
-                        v-model="nameUser"
-                        :placeholder="'ej: John doe'"
-                    />
-                </div>
+            <FormUser
+                :editing="editing"
+                @onSubmit="onSubmit"
+                v-model:nameUser="nameUser"
+                v-model:ocupationUser="ocupationUser"
+            />
 
-                <div class="grid">
-                    <label>Rol user</label>
-                    <select v-model="ocupationUser" class="input">
-                        <option disabled value="">Please select one</option>
-                        <option value="frontend">Frontend</option>
-                        <option value="backend">Backend</option>
-                        <option value="Q&A">Q&A</option>
-                        <option value="DevOps">DevOps</option>
-                    </select>
-                </div>
-                <button
-                    class="bg-green-500 w-1/2 m-auto px-3 py-2 rounded-full"
-                    :class="{ 'bg-yellow-500': editing }"
-                >
-                    {{ editing ? "Edit" : "Create" }}
-                </button>
-            </form>
-
-            <div class="grid">
-                <label for="">Filtrar por</label>
-                <select class="input" v-model="filters">
-                    <option disabled value="">Please select one</option>
-                    <option value="">All</option>
-                    <option value="frontend">Frontend</option>
-                    <option value="backend">Backend</option>
-                    <option value="Q&A">Q&A</option>
-                    <option value="DevOps">DevOps</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                </select>
-            </div>
+            <Filter v-model="filters" />
 
             <Users
                 :changeState="changeState"
