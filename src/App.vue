@@ -1,24 +1,9 @@
 <script setup lang="ts">
 import { Ref, computed, ref } from "vue";
+import { Filters, User } from "./interfaces";
+
 import Layout from "./components/Layout.vue";
-
-type Ocupation = "frontend" | "backend" | "Q&A" | "DevOps";
-
-type Filters =
-    | "frontend"
-    | "backend"
-    | "Q&A"
-    | "DevOps"
-    | "active"
-    | "inactive"
-    | null;
-
-interface User {
-    id: string;
-    name: string;
-    state: boolean;
-    ocupation: Ocupation;
-}
+import Users from "./components/Users.vue";
 
 const users: Ref<User[]> = ref(
     JSON.parse(localStorage.getItem("users")!) || []
@@ -68,6 +53,7 @@ function onSubmit() {
 
         nameUser.value = "";
         ocupationUser.value = "";
+
         filters.value = null;
         editing.value = null;
         localStorage.setItem("users", JSON.stringify(users.value));
@@ -75,6 +61,9 @@ function onSubmit() {
 
         return;
     }
+
+    console.log(nameUser.value);
+    console.log(ocupationUser.value);
 
     users.value.unshift({
         id: crypto.randomUUID(),
@@ -89,6 +78,9 @@ function onSubmit() {
     ocupationUser.value = "";
     filters.value = null;
     localStorage.setItem("users", JSON.stringify(users.value));
+
+    console.log(nameUser.value);
+    console.log(ocupationUser.value);
 }
 
 function fnEditing(id: string) {
@@ -165,54 +157,17 @@ const usersFiltered = computed(() =>
                 </select>
             </div>
 
-            <section class="flex flex-wrap gap-2">
-                <article
-                    v-for="user in usersFiltered"
-                    class="border-2 border-gray-500 p-2 rounded-md grid gap-1 flex-1"
-                >
-                    <p>
-                        {{ user.name }} -
-                        <span v-if="user.state" class="label bg-green-700"
-                            >active</span
-                        >
-                        <span v-else class="label bg-red-700">inactive</span>
-                    </p>
-                    <p>
-                        Rol:
-                        <b class="bg-black px-2 rounded-sm text-xs">{{
-                            user.ocupation
-                        }}</b>
-                    </p>
-                    <p class="text-xs font-bold font-mono">
-                        {{ user.id.split("-").join("").slice(0, 10) }}...
-                    </p>
-                    <section class="flex gap-1">
-                        <button
-                            class="btn bg-red-500"
-                            @click="() => delUser(user.id)"
-                        >
-                            del
-                        </button>
-                        <button
-                            class="btn bg-yellow-500"
-                            @click="() => fnEditing(user.id)"
-                        >
-                            edit
-                        </button>
-                        <button
-                            class="btn bg-blue-500"
-                            @click="() => changeState(user.id)"
-                        >
-                            change state
-                        </button>
-                    </section>
-                </article>
-            </section>
+            <Users
+                :changeState="changeState"
+                :delUser="delUser"
+                :fnEditing="fnEditing"
+                :usersFiltered="usersFiltered"
+            />
         </section>
     </Layout>
 </template>
 
-<style scoped>
+<style>
 .label {
     @apply px-2 rounded-md text-xs uppercase font-bold;
 }
