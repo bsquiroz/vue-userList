@@ -1,5 +1,8 @@
 <script setup lang="ts">
-const filters = defineModel();
+import { storeToRefs } from "pinia";
+import { useformUserStore } from "../stores/formUser";
+
+const { filters } = storeToRefs(useformUserStore());
 </script>
 
 <template>

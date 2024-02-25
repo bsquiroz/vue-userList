@@ -1,20 +1,13 @@
 <script setup lang="ts">
-import { User } from "../interfaces";
+import { storeToRefs } from "pinia";
+import { useformUserStore } from "../stores/formUser";
 
-interface Props {
-    editing: User | null;
-}
-
-const emit = defineEmits(["onSubmit"]);
-
-const { editing } = defineProps<Props>();
-
-const nameUser = defineModel("nameUser");
-const ocupationUser = defineModel("ocupationUser");
+const { editing, nameUser, ocupationUser } = storeToRefs(useformUserStore());
+const { onSubmit } = useformUserStore();
 </script>
 
 <template>
-    <form @submit.prevent="emit('onSubmit')" class="flex flex-col gap-2">
+    <form @submit.prevent="onSubmit" class="flex flex-col gap-2">
         <h1 className="text-5xl font-bold text-center">User List</h1>
         <h2 class="text-center text-2xl">
             {{ editing ? "Update user" : "Create user" }}

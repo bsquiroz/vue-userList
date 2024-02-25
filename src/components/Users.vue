@@ -1,14 +1,9 @@
 <script setup lang="ts">
-import { User } from "../interfaces";
+import { storeToRefs } from "pinia";
+import { useformUserStore } from "../stores/formUser";
 
-interface Props {
-    usersFiltered: User[];
-    delUser: (id: string) => void;
-    fnEditing: (id: string) => void;
-    changeState: (id: string) => void;
-}
-
-const { changeState, delUser, fnEditing, usersFiltered } = defineProps<Props>();
+const { usersFiltered } = storeToRefs(useformUserStore());
+const { delUser, fnEditing, changeState } = useformUserStore();
 </script>
 
 <template>
